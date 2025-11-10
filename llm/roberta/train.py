@@ -59,8 +59,8 @@ def main():
     trainer = Trainer(
         model=model,
         args=training_args,
-        train_dataset=encoded_dataset["train"],
-        eval_dataset=encoded_dataset["validation"],
+        train_dataset=encoded_dataset["train"].shuffle(seed=42).select(range(2000)),
+        eval_dataset=encoded_dataset["validation"].select(range(500)),
     )
 
     # --- Train & save ---

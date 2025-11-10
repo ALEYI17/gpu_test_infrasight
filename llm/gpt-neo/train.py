@@ -64,8 +64,8 @@ def main():
     trainer = Trainer(
         model=model,
         args=args,
-        train_dataset=tokenized["train"],
-        eval_dataset=tokenized["validation"],
+        train_dataset=tokenized["train"].shuffle(seed=42).select(range(2000)),
+        eval_dataset=tokenized["validation"].select(range(500)),
         data_collator=data_collator,
     )
 
