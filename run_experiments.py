@@ -1,11 +1,3 @@
-#!/usr/bin/env python3
-"""
-Automated experiment-runner for infrasight stack using Dockerized ClickHouse.
-
-Now sources a single base .env at repo root (either a file or a virtualenv dir).
-"""
-
-import os
 import subprocess
 import datetime
 import json
@@ -22,12 +14,16 @@ CONFIG = {
         "audit.gpu_event_tokens",
     ],
     "experiments": [
+        ("other", "passwd_cracker/hashcat", "passwd_hashcat"),
         ("dl_ml", "dl/cnn/train.py", "dl_cnn_train"),
         ("dl_ml", "dl/lstm/train.py", "dl_lstm_train"),
         ("llm", "llm/bert", "llm_bert"),
         ("llm", "llm/gpt", "llm_gpt"),
+        ("llm", "llm/gpt-neo", "llm_gpt_neo"),
+        ("llm", "llm/roberta", "llm_roberta"),
         ("dl_ml", "ml/logistic_regression/train.py", "ml_logreg"),
-        ("other", "passwd_cracker/hashcat", "passwd_hashcat"),
+        ("dl_ml", "ml/random_forest/train.py", "ml_forest"),
+        ("dl_ml", "ml/svm/train.py", "ml_svm"),
     ],
     "stop_on_error": True,
 }
@@ -125,16 +121,34 @@ def run_experiment_dl_ml(script_path, exp_name):
 def run_experiment_other(path, exp_name):
     print(f"--- Running OTHER experiment {exp_name} ---")
     p = Path(path)
+
+    def exec_sh(script_path: Path):
+        # Run the script in its parent dir so relative paths inside the script work.
+        cmd = f"bash -lc 'cd {shlex.quote(str(script_path.parent))} && bash {shlex.quote(str(script_path.name))}'"
+        run_cmd_live(cmd)
+
     if p.is_file():
-        if p.suffix == ".py":
-            run_cmd_live(build_runner_command(p))
+        if p.suffix == ".sh":
+            exec_sh(p)
+            return
         else:
-            # generic execution - cd into dir if file in a dir
-            run_cmd_live(f"bash -lc 'cd {shlex.quote(str(p.parent))} && {shlex.quote(str(p))}'")
-    elif (p / "run.sh").exists():
-        run_cmd_live(f"bash -lc 'cd {shlex.quote(str(p))} && bash run.sh'")
+            raise FileNotFoundError(f"Provided file {p} is not a .sh script. Only .sh scripts are supported for 'other' experiments.")
+    elif p.is_dir():
+        # Preferred script names in order
+        preferred = ["run.sh", "run_hashcat.sh", "run_hashcat_minimal.sh", "run_hashcat.sh"]
+        for name in preferred:
+            candidate = p / name
+            if candidate.exists() and candidate.is_file():
+                exec_sh(candidate)
+                return
+        # If no preferred entrypoint found, try to run any *.sh in the dir (optional)
+        sh_files = sorted([f for f in p.glob("*.sh") if f.is_file()])
+        if sh_files:
+            exec_sh(sh_files[0])
+            return
+        raise FileNotFoundError(f"No runnable .sh file found in directory {p}. Expected one of: {preferred} or any *.sh")
     else:
-        raise FileNotFoundError(f"No runnable entry in {p}")
+        raise FileNotFoundError(f"Path {p} does not exist.")
 
 def save_metadata(out_dir, script_ref, exp_name):
     meta = {
