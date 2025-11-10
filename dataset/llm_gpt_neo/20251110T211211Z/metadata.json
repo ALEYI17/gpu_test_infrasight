@@ -1,0 +1,5 @@
+{
+  "experiment": "llm_gpt_neo",
+  "script_or_path": "llm/gpt-neo",
+  "timestamp_utc": "2025-11-10T21:21:04.183245Z"
+}
