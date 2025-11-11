@@ -1,0 +1,5 @@
+{
+  "experiment": "ml_svm",
+  "script_or_path": "ml/svm/train.py",
+  "timestamp_utc": "2025-11-11T00:01:02.601578Z"
+}

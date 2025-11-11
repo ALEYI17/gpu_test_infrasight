@@ -1,0 +1,5 @@
+{
+  "experiment": "passwd_hashcat",
+  "script_or_path": "passwd_cracker/hashcat",
+  "timestamp_utc": "2025-11-10T23:41:05.495692Z"
+}
