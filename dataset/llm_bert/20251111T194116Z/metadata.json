@@ -1,0 +1,5 @@
+{
+  "experiment": "llm_bert",
+  "script_or_path": "llm/bert",
+  "timestamp_utc": "2025-11-11T19:43:04.462282Z"
+}

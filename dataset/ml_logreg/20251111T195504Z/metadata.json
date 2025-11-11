@@ -1,0 +1,5 @@
+{
+  "experiment": "ml_logreg",
+  "script_or_path": "ml/logistic_regression/train.py",
+  "timestamp_utc": "2025-11-11T19:55:24.399322Z"
+}
