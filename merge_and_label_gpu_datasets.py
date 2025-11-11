@@ -1,11 +1,12 @@
 import pandas as pd
 from pathlib import Path
+from fastparquet import write
 
 DATASET_ROOT = Path("dataset")
 
 # 0 = benign, 1 = malign
 LABEL_MAP = {
-    "passwd_hashcat": 1,  # malign (password cracker)
+    "passwd_hashcat": 1,  # malign
     "dl_cnn_train": 0,
     "dl_lstm_train": 0,
     "llm_bert": 0,
@@ -17,13 +18,34 @@ LABEL_MAP = {
     "ml_svm": 0,
 }
 
-# Output files
 OUT_TIME_WINDOWS = "final_gpu_time_windows.parquet"
 OUT_EVENT_TOKENS = "final_gpu_event_tokens.parquet"
 
 
-def load_and_label_parquets(app_dir: Path, label: int, app_name: str):
-    labeled_dfs = {"time_windows": None, "event_tokens": None}
+def append_parquet(df: pd.DataFrame, out_path: str, schema_set: set):
+    """Append a dataframe to a Parquet file incrementally."""
+    if df is None or df.empty:
+        return
+
+    # Ensure consistent columns and dtypes
+    df = df.convert_dtypes()
+
+    if out_path not in schema_set:
+        # First write
+        write(out_path, df, compression="SNAPPY")
+        schema_set.add(out_path)
+    else:
+        # Append to existing file
+        write(out_path, df, append=True)
+
+
+def process_app(app_name: str, label: int):
+    app_dir = DATASET_ROOT / app_name
+    if not app_dir.exists():
+        print(f"[!] Skipping missing app dir: {app_dir}")
+        return None, None
+
+    all_tw, all_tok = [], []
 
     for exp_dir in app_dir.iterdir():
         if not exp_dir.is_dir():
@@ -37,58 +59,43 @@ def load_and_label_parquets(app_dir: Path, label: int, app_name: str):
             df_tw["app_name"] = app_name
             df_tw["label"] = label
             df_tw["experiment_time"] = exp_dir.name
-            labeled_dfs["time_windows"] = (
-                pd.concat([labeled_dfs["time_windows"], df_tw], ignore_index=True)
-                if labeled_dfs["time_windows"] is not None
-                else df_tw
-            )
+            all_tw.append(df_tw)
 
         if token_path.exists():
             df_tok = pd.read_parquet(token_path)
             df_tok["app_name"] = app_name
             df_tok["label"] = label
             df_tok["experiment_time"] = exp_dir.name
-            labeled_dfs["event_tokens"] = (
-                pd.concat([labeled_dfs["event_tokens"], df_tok], ignore_index=True)
-                if labeled_dfs["event_tokens"] is not None
-                else df_tok
-            )
+            all_tok.append(df_tok)
 
-    return labeled_dfs
+    if all_tw:
+        df_tw = pd.concat(all_tw, ignore_index=True)
+    else:
+        df_tw = None
+
+    if all_tok:
+        df_tok = pd.concat(all_tok, ignore_index=True)
+    else:
+        df_tok = None
+
+    print(f"[✓] Processed {app_name}")
+    return df_tw, df_tok
 
 
 def main():
-    all_time_windows = []
-    all_event_tokens = []
+    schema_written = set()
 
     for app_name, label in LABEL_MAP.items():
-        app_dir = DATASET_ROOT / app_name
-        if not app_dir.exists():
-            print(f"[!] Skipping missing app dir: {app_dir}")
-            continue
+        df_tw, df_tok = process_app(app_name, label)
 
-        labeled = load_and_label_parquets(app_dir, label, app_name)
-        if labeled["time_windows"] is not None:
-            all_time_windows.append(labeled["time_windows"])
-        if labeled["event_tokens"] is not None:
-            all_event_tokens.append(labeled["event_tokens"])
+        if df_tw is not None:
+            append_parquet(df_tw, OUT_TIME_WINDOWS, schema_written)
 
-    # Concatenate everything and save unified parquet files
-    if all_time_windows:
-        final_tw = pd.concat(all_time_windows, ignore_index=True)
-        final_tw.to_parquet(OUT_TIME_WINDOWS)
-        print(f"[✓] Saved time window dataset → {OUT_TIME_WINDOWS} ({len(final_tw)} rows)")
-    else:
-        print("[!] No time window data found.")
-
-    if all_event_tokens:
-        final_et = pd.concat(all_event_tokens, ignore_index=True)
-        final_et.to_parquet(OUT_EVENT_TOKENS)
-        print(f"[✓] Saved event tokens dataset → {OUT_EVENT_TOKENS} ({len(final_et)} rows)")
-    else:
-        print("[!] No event token data found.")
+        if df_tok is not None:
+            append_parquet(df_tok, OUT_EVENT_TOKENS, schema_written)
 
 
 if __name__ == "__main__":
     main()
+    print("[✅] Merge complete.")
 
