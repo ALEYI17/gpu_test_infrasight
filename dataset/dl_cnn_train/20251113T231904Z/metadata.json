@@ -1,0 +1,5 @@
+{
+  "experiment": "dl_cnn_train",
+  "script_or_path": "dl/cnn/train.py",
+  "timestamp_utc": "2025-11-13T23:20:01.595513Z"
+}

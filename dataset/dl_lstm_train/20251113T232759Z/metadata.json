@@ -1,0 +1,5 @@
+{
+  "experiment": "dl_lstm_train",
+  "script_or_path": "dl/lstm/train.py",
+  "timestamp_utc": "2025-11-13T23:28:49.561976Z"
+}
