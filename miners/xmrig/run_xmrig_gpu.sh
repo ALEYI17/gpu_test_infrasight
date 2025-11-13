@@ -17,7 +17,8 @@ docker run -dit \
   $IMAGE bash
 
 ALGORITHMS=(
-  "rx/arq"
+  "rx/0"
+  "rx/wow"
   "rx/sfx"
 )
 

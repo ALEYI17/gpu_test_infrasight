@@ -7,6 +7,7 @@ DATASET_ROOT = Path("dataset")
 # 0 = benign, 1 = malign
 LABEL_MAP = {
     "passwd_hashcat": 1,  # malign
+    "miner_xmrig" : 1,
     "dl_cnn_train": 0,
     "dl_lstm_train": 0,
     "llm_bert": 0,
@@ -61,12 +62,12 @@ def process_app(app_name: str, label: int):
             df_tw["experiment_time"] = exp_dir.name
             all_tw.append(df_tw)
 
-        if token_path.exists():
-            df_tok = pd.read_parquet(token_path)
-            df_tok["app_name"] = app_name
-            df_tok["label"] = label
-            df_tok["experiment_time"] = exp_dir.name
-            all_tok.append(df_tok)
+        # if token_path.exists():
+        #     df_tok = pd.read_parquet(token_path)
+        #     df_tok["app_name"] = app_name
+        #     df_tok["label"] = label
+        #     df_tok["experiment_time"] = exp_dir.name
+        #     all_tok.append(df_tok)
 
     if all_tw:
         df_tw = pd.concat(all_tw, ignore_index=True)
