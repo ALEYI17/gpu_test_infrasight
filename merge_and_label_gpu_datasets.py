@@ -17,6 +17,7 @@ LABEL_MAP = {
     "ml_forest": 0,
     "ml_logreg": 0,
     "ml_svm": 0,
+    "blender": 0,
 }
 
 OUT_TIME_WINDOWS = "final_gpu_time_windows.parquet"
