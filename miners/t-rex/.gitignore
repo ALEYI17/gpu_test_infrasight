@@ -1,0 +1,17 @@
+t-rex
+*.tar.gz
+*.log
+ALPH-*.sh
+ERGO-*.sh
+ETC*.sh
+ETHW*.sh
+FIRO-*.sh
+RVN-*.sh
+VBK-*.sh
+VEIL-*.sh
+ZANO-*.sh
+CFX-*.sh
+SERO-*.sh
+README.md
+help
+config_example

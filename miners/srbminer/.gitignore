@@ -1,0 +1,12 @@
+SRBMiner-MULTI
+SRBMiner-Multi-*/
+*.tar.gz
+*.log
+Autotune/
+Cache/
+Logs/
+ReadMe.txt
+start_*.sh
+list-*.sh
+help.sh
+guided-setup.sh

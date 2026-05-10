@@ -1,0 +1,11 @@
+miner
+miner.sig
+gminer_*/
+*.tar.xz
+*.log
+public.gpg
+cuda-keyring*
+*.sh.bak
+mine_*.sh
+readme.txt
+sample_config.txt
