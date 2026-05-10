@@ -1,21 +1,7 @@
 #!/bin/bash
 set -e
-IMAGE="alejandrosalamanca17/bzminer-gpu-test:latest"
-CONTAINER_NAME="bzminer-gpu-test"
+SCRIPT_DIR="$(dirname "$0")"
 DURATION=350
-
-cleanup() {
-  echo "Cleaning up container..."
-  docker rm -f $CONTAINER_NAME >/dev/null 2>&1 || true
-}
-trap cleanup EXIT
-
-docker run -dit \
-  --name $CONTAINER_NAME \
-  --gpus all \
-  --network mining-net \
-  -w /bzminer_v24.0.2_linux \
-  $IMAGE bash
 
 ALGORITHMS=(
   "ethash 0x1234567890123456789012345678901234567890 stratum+tcp://eth.2miners.com:2020"
@@ -32,11 +18,11 @@ for ENTRY in "${ALGORITHMS[@]}"; do
   echo " Running BZMiner with algorithm: $ALGO"
   echo "=============================================="
 
-  timeout ${DURATION}s docker exec -i $CONTAINER_NAME \
-    ./bzminer -a "$ALGO" \
-      -w $WALLET \
-      -p $POOL \
-      -r worker1 --nc 1 --no_watchdog || true
+  timeout ${DURATION}s $SCRIPT_DIR/bzminer \
+    -a "$ALGO" \
+    -w $WALLET \
+    -p $POOL \
+    -r worker1 --nc 1 --no_watchdog || true
 
   echo "Algorithm $ALGO finished (or timed out). Cooling down GPU for 60s..."
   sleep 60

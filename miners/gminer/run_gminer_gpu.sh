@@ -1,21 +1,7 @@
 #!/bin/bash
 set -e
-IMAGE="alejandrosalamanca17/gminer-gpu-test:latest"
-CONTAINER_NAME="gminer-gpu-test"
+SCRIPT_DIR="$(dirname "$0")"
 DURATION=350
-
-cleanup() {
-  echo "Cleaning up container..."
-  docker rm -f $CONTAINER_NAME >/dev/null 2>&1 || true
-}
-trap cleanup EXIT
-
-docker run -dit \
-  --name $CONTAINER_NAME \
-  --gpus all \
-  --network mining-net \
-  -w / \
-  $IMAGE bash
 
 ALGORITHMS=(
   "ethash eth.2miners.com:2020 0x1234567890123456789012345678901234567890"
@@ -32,11 +18,11 @@ for ENTRY in "${ALGORITHMS[@]}"; do
   echo " Running GMiner with algorithm: $ALGO"
   echo "=============================================="
 
-  timeout ${DURATION}s docker exec -i $CONTAINER_NAME \
-    ./miner --algo "$ALGO" \
-      --server $POOL \
-      --user $WALLET \
-      --cuda 1 --nvml 0 || true
+  timeout ${DURATION}s $SCRIPT_DIR/miner \
+    --algo "$ALGO" \
+    --server $POOL \
+    --user $WALLET \
+    --cuda 1 --nvml 0 || true
 
   echo "Algorithm $ALGO finished (or timed out). Cooling down GPU for 60s..."
   sleep 60

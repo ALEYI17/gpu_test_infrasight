@@ -1,21 +1,7 @@
 #!/bin/bash
 set -e
-IMAGE="alejandrosalamanca17/nbminer-gpu-test:latest"
-CONTAINER_NAME="nbminer-gpu-test"
-DURATION=350   # seconds per algorithm
-
-cleanup() {
-  echo "Cleaning up container..."
-  docker rm -f $CONTAINER_NAME >/dev/null 2>&1 || true
-}
-trap cleanup EXIT
-
-docker run -dit \
-  --name $CONTAINER_NAME \
-  --gpus all \
-  --network mining-net \
-  -w /NBMiner_Linux \
-  $IMAGE bash
+SCRIPT_DIR="$(dirname "$0")"
+DURATION=350
 
 ALGORITHMS=(
   "ethash eth.2miners.com:2020 0x1234567890123456789012345678901234567890.worker1"
@@ -32,11 +18,11 @@ for ENTRY in "${ALGORITHMS[@]}"; do
   echo " Running NBMiner with algorithm: $ALGO"
   echo "=============================================="
 
-  timeout ${DURATION}s docker exec -i $CONTAINER_NAME \
-    ./nbminer -a "$ALGO" \
-      -o stratum+tcp://$POOL \
-      -u $WALLET \
-      --no-health || true
+  timeout ${DURATION}s $SCRIPT_DIR/nbminer \
+    -a "$ALGO" \
+    -o stratum+tcp://$POOL \
+    -u $WALLET \
+    --no-health || true
 
   echo "Algorithm $ALGO finished (or timed out). Cooling down GPU for 60s..."
   sleep 60
