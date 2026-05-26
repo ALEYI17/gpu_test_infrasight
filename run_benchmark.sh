@@ -22,7 +22,7 @@ LOADER="/home/aleyi/InfraSight_gpu/main \
   --tracer=fingerprint \
   --server-addr=localhost \
   --server-port=8080 \
-  --cuda-lib=/usr/lib/wsl/drivers/nvmdi.inf_amd64_97fbf7e42e9512b0/libcuda.so.1.1"
+  --cuda-lib=/usr/lib/x86_64-linux-gnu/libcuda.so"
 
 # ──────────────────────────────────────────────────────────────────────────────
 # PHASE 1 — Baseline (no probes, no data collection)
