@@ -15,8 +15,7 @@ Usage
   #    Pass the full loader command (already running as root via sudo, no nested sudo needed)
   sudo python3 measure_overhead.py run --mode instrumented \
       --loader "./main --tracer=fingerprint --server-addr=localhost --server-port=8080 \
-                --cuda-lib=/usr/local/cuda/targets/x86_64-linux/lib/stubs/libcuda.so \
-                --time-window=2"
+                --cuda-lib=/usr/local/cuda/targets/x86_64-linux/lib/stubs/libcuda.so"
 
   # 3. Report — compare the two and show overhead table
   python3 measure_overhead.py report
@@ -79,7 +78,7 @@ CONFIG = {
     ],
     # ── Benchmark-specific settings ─────────────────────────────────────────
     "iterations":    5,          # runs per workload per mode
-    # Full loader command with all flags.
+    # Full loader command WITHOUT --time-window (injected automatically per run).
     # No 'sudo' prefix needed: this script is already run as root via sudo,
     # so every subprocess it spawns inherits root — nested sudo would fail.
     "loader": (
@@ -88,15 +87,77 @@ CONFIG = {
         " --server-addr=localhost"
         " --server-port=8080"
         " --cuda-lib=/usr/local/cuda/targets/x86_64-linux/lib/stubs/libcuda.so"
-        " --time-window=2"
     ),
     "loader_wait":   2.0,        # seconds to wait after loader starts before running workload
+    # Time windows (seconds) to collect separate datasets for.
+    # Each window restarts the loader with --time-window=N and saves to
+    # dataset/<exp_name>/tw<N>/<timestamp>/.
+    # Only used when --collect is passed in instrumented mode.
+    # Set to [] or omit --time-windows flag to use a single default window.
+    "time_windows":  [1, 2, 5],
     "results_dir":   "./results/overhead",
     "stop_on_error": False,
 }
 
 REPO_ROOT = Path(__file__).resolve().parent
 BASE_ENV  = REPO_ROOT / ".env"
+
+# ──────────────────────────────────────────────────────────────────────────────
+# CLICKHOUSE DATA COLLECTION  (from your runner — used when --collect is passed)
+# ──────────────────────────────────────────────────────────────────────────────
+
+def ch_query_truncate(container: str, extra_args: str = "") -> None:
+    """Truncate all tracked ClickHouse tables before each instrumented run."""
+    for table in CONFIG["tables"]:
+        q   = f"TRUNCATE TABLE {table}"
+        cmd = (f"docker exec -i {shlex.quote(container)} "
+               f"clickhouse-client {extra_args} --query \"{q}\"")
+        run_cmd_live(cmd)
+
+
+def ch_export_table_parquet(container: str, table: str,
+                             out_path: Path, extra_args: str = "") -> None:
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    q   = f"SELECT * FROM {table} FORMAT Parquet"
+    cmd = (f"docker exec -i {shlex.quote(container)} "
+           f"clickhouse-client {extra_args} --query \"{q}\"")
+    print(f"  [collect] Exporting {table} -> {out_path}")
+    with open(out_path, "wb") as f:
+        p = subprocess.Popen(cmd, shell=True,
+                             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout, stderr = p.communicate()
+        if p.returncode != 0:
+            print(f"  [collect] ClickHouse export failed: "
+                  f"{stderr.decode(errors='ignore')}")
+            raise subprocess.CalledProcessError(p.returncode, cmd)
+        f.write(stdout)
+
+
+def ch_export_all(container: str, out_dir: Path, extra_args: str = "") -> None:
+    for table in CONFIG["tables"]:
+        safe = table.replace(".", "_")
+        ch_export_table_parquet(container, table,
+                                out_dir / f"{safe}.parquet", extra_args)
+
+
+def ch_save_metadata(out_dir: Path, exp_name: str, path: str,
+                     iteration: int, overhead_result: Dict,
+                     time_window: Optional[int] = None) -> None:
+    meta = {
+        "experiment":    exp_name,
+        "script_or_path": path,
+        "iteration":     iteration,
+        "time_window_s": time_window,
+        "timestamp_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        "overhead": {
+            "wall_time_s":  overhead_result["wall_time_s"],
+            "exit_code":    overhead_result["exit_code"],
+            "bpf_total_ns": sum(
+                v["total_ns"] for v in overhead_result.get("bpf_delta", {}).values()
+            ),
+        },
+    }
+    (out_dir / "metadata.json").write_text(json.dumps(meta, indent=2))
 
 # ──────────────────────────────────────────────────────────────────────────────
 # RUNNER FUNCTIONS  (verbatim copy from your runner so they stay in sync)
@@ -500,59 +561,115 @@ def cmd_run(args):
     results_dir = Path(args.results_dir)
     results_dir.mkdir(parents=True, exist_ok=True)
 
+    collect     = args.collect and args.mode == "instrumented"
+    container   = CONFIG["clickhouse_container"]
+    ch_extra    = CONFIG["clickhouse_client_args"]
+    dataset_dir = Path(CONFIG["dataset_dir"])
+
+    # Time windows: use CLI value if given, else CONFIG default, else [None] (single pass)
+    if collect:
+        time_windows = args.time_windows if args.time_windows else CONFIG.get("time_windows", [])
+        if not time_windows:
+            time_windows = [None]   # single pass, no --time-window injection
+        dataset_dir.mkdir(exist_ok=True)
+        print(f"[collect] Data collection ON  container={container!r}  "
+              f"time_windows={time_windows}")
+    else:
+        time_windows = [None]       # overhead-only: one pass, no window looping
+        if args.collect and args.mode == "baseline":
+            print("[collect] NOTE: --collect ignored in baseline mode (no probes -> no data)")
+
     bpf_stats_ok = False
     if args.mode == "instrumented":
         bpf_stats_ok = enable_bpf_stats()
 
-    # For instrumented mode: start the loader once for the entire batch.
-    # (Change to per-workload if your loader needs to be restarted each time.)
-    loader_cmd = args.loader if args.mode == "instrumented" else None
+    base_loader_cmd = args.loader if args.mode == "instrumented" else None
 
-    with LoaderContext(loader_cmd, wait=args.loader_wait):
-        for kind, path, exp_name in experiments:
-            print(f"\n{'═'*60}")
-            print(f"  {exp_name}  [{kind}]  mode={args.mode}")
-            print(f"{'═'*60}")
+    for tw in time_windows:
+        # Build loader command for this time window
+        if base_loader_cmd and tw is not None:
+            loader_cmd = f"{base_loader_cmd} --time-window={tw}"
+            tw_label   = f"tw{tw}"
+        else:
+            loader_cmd = base_loader_cmd
+            tw_label   = None
 
-            iterations = []
-            for i in range(args.iterations):
-                print(f"\n  ── iteration {i+1}/{args.iterations} ──")
-                result = run_timed(kind, path, exp_name, bpf_stats_ok)
-                result["iteration"] = i + 1
-                iterations.append(result)
+        if tw is not None:
+            print(f"\n{'*'*60}")
+            print(f"  TIME WINDOW: {tw}s")
+            print(f"{'*'*60}")
 
-                # Live progress line
-                probe_ns = sum(v["total_ns"] for v in result["bpf_delta"].values()) \
-                           if result["bpf_delta"] else 0
-                pct = (probe_ns / 1e9) / result["wall_time_s"] * 100 \
-                      if result["wall_time_s"] > 0 and probe_ns else 0
-                print(f"  wall={result['wall_time_s']:.3f}s  exit={result['exit_code']}"
-                      + (f"  probe_total={probe_ns/1e6:.3f}ms ({pct:.4f}%)" if probe_ns else ""))
+        with LoaderContext(loader_cmd, wait=args.loader_wait):
+            for kind, path, exp_name in experiments:
+                print(f"\n{'='*60}")
+                print(f"  {exp_name}  [{kind}]  mode={args.mode}"
+                      + (f"  tw={tw}s" if tw is not None else ""))
+                print(f"{'='*60}")
 
-                if result["exit_code"] != 0 and CONFIG["stop_on_error"]:
-                    print(f"  ERROR: {result['error']}")
-                    break
+                iterations = []
+                for i in range(args.iterations):
+                    print(f"\n  -- iteration {i+1}/{args.iterations} --")
 
-            agg = aggregate_iterations(iterations)
-            record = {
-                "name":       exp_name,
-                "kind":       kind,
-                "path":       path,
-                "mode":       args.mode,
-                "timestamp":  datetime.datetime.now(datetime.timezone.utc).isoformat(),
-                "iterations": iterations,
-                "aggregate":  agg,
-            }
+                    # pre-run: truncate ClickHouse so each iteration is clean
+                    if collect:
+                        print("  [collect] Truncating ClickHouse tables...")
+                        try:
+                            ch_query_truncate(container, ch_extra)
+                        except Exception as e:
+                            print(f"  [collect] WARNING: truncate failed: {e}")
 
-            out = results_dir / f"{exp_name}_{args.mode}.json"
-            out.write_text(json.dumps(record, indent=2))
+                    result = run_timed(kind, path, exp_name, bpf_stats_ok)
+                    result["iteration"]    = i + 1
+                    result["time_window"]  = tw
+                    iterations.append(result)
 
-            print(f"\n  [✓] Saved → {out}")
-            if agg["wall_mean_s"] is not None:
-                print(f"      wall = {agg['wall_mean_s']:.3f}s "
-                      f"± {agg['wall_stdev_s']:.3f}s  "
-                      f"(n={agg['n_ok']}/{agg['n_total']})")
+                    probe_ns = sum(v["total_ns"] for v in result["bpf_delta"].values()) \
+                               if result["bpf_delta"] else 0
+                    pct = (probe_ns / 1e9) / result["wall_time_s"] * 100 \
+                          if result["wall_time_s"] > 0 and probe_ns else 0
+                    print(f"  wall={result['wall_time_s']:.3f}s  exit={result['exit_code']}"
+                          + (f"  probe_total={probe_ns/1e6:.3f}ms ({pct:.4f}%)" if probe_ns else ""))
 
+                    # post-run: export tables + metadata into tw-specific subdir
+                    if collect and result["exit_code"] == 0:
+                        ts      = datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+                        # dataset/<exp_name>/tw<N>/<timestamp>/  (or /<timestamp>/ if no window)
+                        run_dir = (dataset_dir / exp_name / tw_label / ts
+                                   if tw_label else dataset_dir / exp_name / ts)
+                        run_dir.mkdir(parents=True, exist_ok=True)
+                        try:
+                            ch_export_all(container, run_dir, ch_extra)
+                            ch_save_metadata(run_dir, exp_name, path, i + 1, result, tw)
+                            print(f"  [collect] Saved -> {run_dir}")
+                        except Exception as e:
+                            print(f"  [collect] WARNING: export failed: {e}")
+
+                    if result["exit_code"] != 0 and CONFIG["stop_on_error"]:
+                        print(f"  ERROR: {result['error']}")
+                        break
+
+                agg = aggregate_iterations(iterations)
+                # overhead results are per time-window so they don't overwrite each other
+                tw_suffix = f"_tw{tw}" if tw is not None and collect else ""
+                record = {
+                    "name":        exp_name,
+                    "kind":        kind,
+                    "path":        path,
+                    "mode":        args.mode,
+                    "time_window": tw,
+                    "timestamp":   datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                    "iterations":  iterations,
+                    "aggregate":   agg,
+                }
+
+                out = results_dir / f"{exp_name}{tw_suffix}_{args.mode}.json"
+                out.write_text(json.dumps(record, indent=2))
+
+                print(f"\n  [OK] Overhead saved -> {out}")
+                if agg["wall_mean_s"] is not None:
+                    print(f"      wall = {agg['wall_mean_s']:.3f}s "
+                          f"+/- {agg['wall_stdev_s']:.3f}s  "
+                          f"(n={agg['n_ok']}/{agg['n_total']})")
 
 def cmd_report(args):
     """Print overhead comparison table from saved baseline + instrumented results."""
@@ -818,8 +935,17 @@ def main():
 
     # ── run ──────────────────────────────────────────────────────────────────
     p_run = sub.add_parser("run", help="Run active experiments in baseline or instrumented mode")
-    p_run.add_argument("--mode",       required=True, choices=["baseline", "instrumented"])
-    p_run.add_argument("--iterations", type=int, default=CONFIG["iterations"])
+    p_run.add_argument("--mode",         required=True, choices=["baseline", "instrumented"])
+    p_run.add_argument("--iterations",   type=int, default=CONFIG["iterations"])
+    p_run.add_argument("--collect",      action="store_true",
+                       help="Truncate ClickHouse before each run and export Parquet after. "
+                            "Only active in instrumented mode.")
+    p_run.add_argument("--time-windows", type=int, nargs="+",
+                       metavar="N",
+                       default=None,
+                       help="Time windows in seconds to collect separate datasets for "
+                            "(e.g. --time-windows 2 5 10). Overrides CONFIG[\"time_windows\"]. "
+                            "Only used with --collect in instrumented mode.")
     add_common(p_run)
     p_run.set_defaults(func=cmd_run)
 
