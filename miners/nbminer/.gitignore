@@ -2,3 +2,6 @@ nbminer
 NBMiner_*/
 *.tgz
 *.log
+*.sha256
+readme.md
+start_*.sh

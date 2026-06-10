@@ -10,3 +10,12 @@ start_*.sh
 list-*.sh
 help.sh
 guided-setup.sh
+srbminer/SRBMiner-Multi-*/
+srbminer/Autotune/
+srbminer/Cache/
+srbminer/Logs/
+srbminer/ReadMe.txt
+srbminer/start_*.sh
+srbminer/list-*.sh
+srbminer/help.sh
+srbminer/guided-setup.sh

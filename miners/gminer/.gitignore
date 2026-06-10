@@ -9,3 +9,9 @@ cuda-keyring*
 mine_*.sh
 readme.txt
 sample_config.txt
+gminer/gminer_*/
+gminer/mine_*.sh
+gminer/public.gpg
+gminer/sample_config.txt
+gminer/readme.txt
+gminer/cuda-keyring*
