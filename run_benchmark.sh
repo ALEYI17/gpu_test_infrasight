@@ -11,14 +11,14 @@
 
 set -euo pipefail
 
-SCRIPT="python3 measure_overhead.py"
+SCRIPT="sudo env PATH=\"$PATH\" python3 measure_overhead.py"
 RESULTS_DIR="./results/overhead"
-ITERATIONS=1
-LOADER_WAIT=2
+ITERATIONS=3
+LOADER_WAIT=120
 
 # No --time-window here — it is injected automatically per window
 # from CONFIG["time_windows"] = [1, 2, 5]
-LOADER="/home/aleyi/InfraSight_gpu/main \
+LOADER="/home/aleyi/Documents/InfraSight_gpu/main \
   --tracer=fingerprint \
   --server-addr=localhost \
   --server-port=8080 \
@@ -94,7 +94,7 @@ echo "════════════════════════�
 echo "  PHASE 4 — Overhead Report"
 echo "════════════════════════════════════════════════════════"
 
-sudo $SCRIPT report --results-dir "$RESULTS_DIR"
+sudo env PATH="$PATH" python3 measure_overhead.py report --results-dir "$RESULTS_DIR"
 
 # ──────────────────────────────────────────────────────────────────────────────
 # PHASE 5 — Merge datasets per time window
@@ -104,11 +104,11 @@ echo "════════════════════════�
 echo "  PHASE 5 — Merge datasets"
 echo "════════════════════════════════════════════════════════"
 
-python3 merge_dataset.py
+##python3 merge_dataset.py
 
-echo ""
-echo "[done]"
-echo "  results/overhead/                       — overhead JSON files"
-echo "  final_gpu_time_windows_tw1.parquet      — merged dataset tw=1s"
-echo "  final_gpu_time_windows_tw2.parquet      — merged dataset tw=2s"
-echo "  final_gpu_time_windows_tw5.parquet      — merged dataset tw=5s"
+# echo ""
+# echo "[done]"
+# echo "  results/overhead/                       — overhead JSON files"
+# echo "  final_gpu_time_windows_tw1.parquet      — merged dataset tw=1s"
+# echo "  final_gpu_time_windows_tw2.parquet      — merged dataset tw=2s"
+# echo "  final_gpu_time_windows_tw5.parquet      — merged dataset tw=5s"

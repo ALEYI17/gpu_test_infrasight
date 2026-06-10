@@ -23,7 +23,7 @@ def main():
     ]
 
     ts = time.strftime("%Y%m%dT%H%M%SZ", time.gmtime())
-    base = Path("passwd_cracker/hashcat/generated") / ts
+    base = Path("generated") / ts
     base.mkdir(parents=True, exist_ok=True)
 
     md5_file = base / "hashes_md5.txt"

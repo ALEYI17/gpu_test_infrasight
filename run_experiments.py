@@ -17,7 +17,7 @@ CONFIG = {
         #("other", "passwd_cracker/hashcat", "passwd_hashcat"),
         #("other", "miners/xmrig", "miner_xmrig"),
         #("other", "miners/lolminer", "miner_lolminer"),
-        #("other", "blender/", "blender"),
+        ("other", "blender/", "blender"),
         #("other", "miners/nbminer", "miner_nbminer"),
         #("other", "miners/gminer", "miner_gminer"),
         #("other", "miners/bzminer", "miner_bzminer"),

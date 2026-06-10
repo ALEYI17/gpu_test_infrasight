@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-BENCH="/home/aleyi/blender-bench/benchmark-launcher-cli"
+BENCH="/home/aleyi/Downloads/benchmark-launcher-cli"
 
 echo "=== Starting Blender Benchmark (Interactive Mode) ==="
 echo "Using CLI at: $BENCH"

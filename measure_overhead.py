@@ -34,16 +34,64 @@ import argparse
 import datetime
 import json
 import shlex
+import shutil
 import statistics
 import subprocess
 import threading
 import time
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
+import os
 
 # ──────────────────────────────────────────────────────────────────────────────
-# CONFIG  (mirrors your runner's CONFIG — edit the same way you edit that file)
+# BPFTOOL — resolve absolute path at startup so sudo's stripped PATH doesn't
+# matter. On Nix the binary lives in /nix/store/…/bin/bpftool, not /usr/sbin/.
 # ──────────────────────────────────────────────────────────────────────────────
+
+def _resolve_bpftool() -> str:
+    import os, subprocess as _sp
+    # 1. Explicit override via env var:  BPFTOOL=/path/to/bpftool sudo -E python3 ...
+    if env := os.environ.get("BPFTOOL"):
+        return env
+    # 2. Explicit path set in CONFIG (most reliable on Nix)
+    if cfg := CONFIG.get("bpftool_path"):
+        return cfg
+    # 3. shutil.which — works when sudo preserves PATH (sudo env PATH="$PATH" ...)
+    if found := shutil.which("bpftool"):
+        return found
+    # 4. Ask the shell — sources Nix profile scripts that Python doesn't
+    try:
+        out = _sp.check_output(["bash", "-lc", "which bpftool"],
+                               stderr=_sp.DEVNULL, text=True).strip()
+        if out:
+            return out
+    except Exception:
+        pass
+    # 5. Known fixed locations
+    for c in [
+        "/run/current-system/sw/bin/bpftool",
+        Path.home() / ".nix-profile/bin/bpftool",
+        "/nix/var/nix/profiles/default/bin/bpftool",
+        "/usr/sbin/bpftool",
+        "/usr/bin/bpftool",
+        "/sbin/bpftool",
+    ]:
+        if Path(c).exists():
+            return str(c)
+    # 6. Not found
+    print(
+        "[bpf_stats] WARNING: bpftool not found.\n"
+        "  Fix A — set the path in CONFIG:  \"bpftool_path\": \"/path/to/bpftool\"\n"
+        "  Fix B — run with:  BPFTOOL=$(which bpftool) sudo -E python3 measure_overhead.py ...\n"
+        "  Fix C — run with:  sudo env PATH=\"$PATH\" python3 measure_overhead.py ..."
+    )
+    return "bpftool"
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CONFIG  (mirrors your runner's CONFIG — edit the same way you edit that file)
+# ─────────────────────────────────────────────────────────────────────────────
+
 
 CONFIG = {
     "clickhouse_container": "clickhouse",
@@ -63,18 +111,18 @@ CONFIG = {
         #("other", "miners/nbminer",          "miner_nbminer"),
         #("other", "miners/gminer",           "miner_gminer"),
         #("other", "miners/bzminer",          "miner_bzminer"),
-        #("other", "miners/srbminer",         "miner_srbminer"),
+        ("other", "miners/srbminer",         "miner_srbminer"),
         #("other", "miners/t-rex",            "miner_trex"),
-        # ("dl_ml", "dl/cnn/train.py",         "dl_cnn_train"),
-        # ("dl_ml", "dl/lstm/train.py",        "dl_lstm_train"),
-        # ("llm",   "llm/bert",                "llm_bert"),
-        # ("llm",   "llm/bloom",               "llm_bloom"),
-        # ("llm",   "llm/gpt",                 "llm_gpt"),
-        # ("llm",   "llm/gpt-neo",             "llm_gpt_neo"),
-         ("llm",   "llm/roberta",             "llm_roberta"),
-        # ("dl_ml", "ml/logistic_regression/train.py", "ml_logreg"),
-        # ("dl_ml", "ml/random_forest/train.py",       "ml_forest"),
-        # ("dl_ml", "ml/svm/train.py",                 "ml_svm"),
+        #("dl_ml", "dl/cnn/train.py",         "dl_cnn_train"),
+        #("dl_ml", "dl/lstm/train.py",        "dl_lstm_train"),
+        #("llm",   "llm/bert",                "llm_bert"),
+        #("llm",   "llm/bloom",               "llm_bloom"),
+        #("llm",   "llm/gpt",                 "llm_gpt"),
+        #("llm",   "llm/gpt-neo",             "llm_gpt_neo"),
+        #("llm",   "llm/roberta",             "llm_roberta"),
+        #("dl_ml", "ml/logistic_regression/train.py", "ml_logreg"),
+        #("dl_ml", "ml/random_forest/train.py",       "ml_forest"),
+        #("dl_ml", "ml/svm/train.py",                 "ml_svm"),
     ],
     # ── Benchmark-specific settings ─────────────────────────────────────────
     "iterations":    5,          # runs per workload per mode
@@ -82,14 +130,17 @@ CONFIG = {
     # No 'sudo' prefix needed: this script is already run as root via sudo,
     # so every subprocess it spawns inherits root — nested sudo would fail.
     "loader": (
-        "./main"
+        "/home/aleyi/Documents/InfraSight_gpu/main "
         " --tracer=fingerprint"
         " --server-addr=localhost"
         " --server-port=8080"
-        " --cuda-lib=/usr/local/cuda/targets/x86_64-linux/lib/stubs/libcuda.so"
+        " --cuda-lib=/usr/lib/x86_64-linux-gnu/libcuda.so"
     ),
-    "loader_wait":   2.0,        # seconds to wait after loader starts before running workload
-    # Time windows (seconds) to collect separate datasets for.
+    "loader_wait":   60,        # seconds to wait after loader starts before running workload
+    # Path to bpftool binary. On Nix, sudo strips PATH so auto-detection fails.
+    # Set this to the output of: which bpftool
+    # Leave empty string "" to let the script auto-detect.
+    "bpftool_path": "/home/aleyi/Documents/bpftool/src/bpftool",
     # Each window restarts the loader with --time-window=N and saves to
     # dataset/<exp_name>/tw<N>/<timestamp>/.
     # Only used when --collect is passed in instrumented mode.
@@ -100,6 +151,7 @@ CONFIG = {
 }
 
 REPO_ROOT = Path(__file__).resolve().parent
+BPFTOOL = _resolve_bpftool()
 BASE_ENV  = REPO_ROOT / ".env"
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -232,7 +284,7 @@ def run_experiment_other(path, exp_name):
             return
         raise FileNotFoundError(f"{p} is not a .sh script")
     elif p.is_dir():
-        preferred = ["run.sh", "run_hashcat.sh", "run_hashcat_minimal.sh"]
+        preferred = ["run.sh", "run_hashcat.sh", "run_hashcat_minimal.sh","run_t-rex_gpu.sh", "run_gminer_gpu.sh", "run_nbminer_gpu.sh", "run_srbminer_gpu.sh"]
         for name in preferred:
             candidate = p / name
             if candidate.exists():
@@ -285,6 +337,7 @@ PROBE_NAMES = {
 
 def enable_bpf_stats() -> bool:
     """Enable kernel BPF stats (needs root). Returns True if already enabled."""
+    print(f"[bpf_stats] Using bpftool: {BPFTOOL}")
     try:
         prev = Path(BPF_STATS_SYSCTL).read_text().strip()
         Path(BPF_STATS_SYSCTL).write_text("1\n")
@@ -302,7 +355,7 @@ def snapshot_bpf_stats() -> Dict[str, Dict]:
     """Snapshot run_cnt / run_time_ns for every tracked probe via bpftool."""
     try:
         r = subprocess.run(
-            ["bpftool", "prog", "show", "--json"],
+            [BPFTOOL, "prog", "show", "--json"],
             capture_output=True, text=True, timeout=10,
         )
         if r.returncode != 0:
@@ -454,13 +507,18 @@ class LoaderContext:
         if not self.loader_cmd:
             return self
 
+        
         print(f"[loader] Starting: {self.loader_cmd}")
         self._proc = subprocess.Popen(
             self.loader_cmd,
             shell=True,
-            stdout=subprocess.PIPE,   # capture so we can show it on failure
-            stderr=subprocess.STDOUT, # merge stderr into stdout
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
             text=True,
+            # Put the shell + all its children in a new process group so we can
+            # kill them all at once in __exit__. Without this, shell=True creates
+            # a shell whose child (the actual binary) survives terminate().
+            start_new_session=True,
         )
 
         # Drain loader output in a background thread so the pipe never blocks
@@ -495,12 +553,20 @@ class LoaderContext:
 
     def __exit__(self, *_):
         if self._proc:
-            print(f"[loader] Stopping PID {self._proc.pid}")
-            self._proc.terminate()
+            import os, signal
+            pgid = os.getpgid(self._proc.pid)
+            print(f"[loader] Stopping process group {pgid} (PID {self._proc.pid})")
             try:
+                # SIGTERM the entire process group — kills shell + loader binary
+                os.killpg(pgid, signal.SIGTERM)
                 self._proc.wait(timeout=5)
+            except ProcessLookupError:
+                pass  # already dead
             except subprocess.TimeoutExpired:
-                self._proc.kill()
+                try:
+                    os.killpg(pgid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
             if self._output_lines:
                 print("[loader] Final output:")
                 for line in self._output_lines[-10:]:
@@ -853,15 +919,38 @@ def cmd_probe_profile(args):
 
     with LoaderContext(args.loader, wait=args.loader_wait):
         # Look up probe IDs AFTER the loader has started and probes are attached
-        r = subprocess.run(["bpftool", "prog", "show", "--json"],
+        r = subprocess.run([BPFTOOL, "prog", "show", "--json"],
                            capture_output=True, text=True)
         if r.returncode != 0:
             print("bpftool failed — are you root?")
             return
 
-        progs = [p for p in json.loads(r.stdout) if p.get("name") in PROBE_NAMES]
+        # Deduplicate by name — keep lowest ID (in case a previous loader didn't clean up)
+        seen: Dict[str, Any] = {}
+        for p in json.loads(r.stdout):
+            name = p.get("name", "")
+            if name in PROBE_NAMES:
+                if name not in seen or p["id"] < seen[name]["id"]:
+                    seen[name] = p
+        progs = list(seen.values())
+
         if not progs:
             print("No matching probes found after loader started — check --cuda-lib path.")
+            return
+
+        # Check if bpftool prog profile is actually supported before looping
+        test = subprocess.run(
+            [BPFTOOL, "prog", "profile", "id", str(progs[0]["id"]),
+             "duration", "1", "cycles"],
+            capture_output=True, text=True, timeout=5,
+        )
+        if "not supported" in (test.stdout + test.stderr):
+            print(
+                "\n[probe-profile] bpftool prog profile is not supported by this build.\n"
+                "  The Nix bpftools package requires clang >= 10.0.0 at build time.\n"
+                "  Your overhead data from phases 1/2 (BPF stats) is sufficient for the study.\n"
+                "  To enable this feature: build bpftool from source with clang support.\n"
+            )
             return
 
         print(f"  Found {len(progs)} probes to profile: {[p['name'] for p in progs]}")
@@ -877,7 +966,7 @@ def cmd_probe_profile(args):
                 shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
             )
             profile_result = subprocess.run(
-                ["bpftool", "prog", "profile", "id", str(pid),
+                [BPFTOOL, "prog", "profile", "id", str(pid),
                  "duration", str(args.duration),
                  "cycles", "instructions", "l1d_loads", "llc_misses"],
                 capture_output=True, text=True, timeout=args.duration + 15,
