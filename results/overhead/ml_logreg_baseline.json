@@ -1,0 +1,360 @@
+{
+  "name": "ml_logreg",
+  "kind": "dl_ml",
+  "path": "ml/logistic_regression/train.py",
+  "mode": "baseline",
+  "time_window": null,
+  "timestamp": "2026-05-28T02:30:03.607207+00:00",
+  "iterations": [
+    {
+      "wall_time_s": 15.282181485000365,
+      "exit_code": 0,
+      "error": "",
+      "bpf_delta": {},
+      "gpu": {
+        "gpu_util": {
+          "mean": 81.42857142857143,
+          "max": 100.0,
+          "min": 2.0
+        },
+        "mem_util": {
+          "mean": 11.493506493506494,
+          "max": 23.0,
+          "min": 4.0
+        },
+        "mem_used_mb": {
+          "mean": 1281.1688311688313,
+          "max": 1614.0,
+          "min": 510.0
+        },
+        "power_w": {
+          "mean": 40.635714285714286,
+          "max": 47.86,
+          "min": 12.79
+        },
+        "sm_clock_mhz": {
+          "mean": 1784.6103896103896,
+          "max": 2010.0,
+          "min": 360.0
+        }
+      },
+      "iteration": 1,
+      "time_window": null
+    },
+    {
+      "wall_time_s": 19.705439833999662,
+      "exit_code": 0,
+      "error": "",
+      "bpf_delta": {},
+      "gpu": {
+        "gpu_util": {
+          "mean": 84.11111111111111,
+          "max": 100.0,
+          "min": 2.0
+        },
+        "mem_util": {
+          "mean": 9.858585858585858,
+          "max": 12.0,
+          "min": 1.0
+        },
+        "mem_used_mb": {
+          "mean": 1318.3838383838383,
+          "max": 1614.0,
+          "min": 510.0
+        },
+        "power_w": {
+          "mean": 45.35545454545455,
+          "max": 48.07,
+          "min": 24.26
+        },
+        "sm_clock_mhz": {
+          "mean": 1962.878787878788,
+          "max": 1995.0,
+          "min": 630.0
+        }
+      },
+      "iteration": 2,
+      "time_window": null
+    },
+    {
+      "wall_time_s": 16.538849173000017,
+      "exit_code": 0,
+      "error": "",
+      "bpf_delta": {},
+      "gpu": {
+        "gpu_util": {
+          "mean": 78.7710843373494,
+          "max": 100.0,
+          "min": 2.0
+        },
+        "mem_util": {
+          "mean": 9.180722891566266,
+          "max": 12.0,
+          "min": 1.0
+        },
+        "mem_used_mb": {
+          "mean": 1296.6506024096386,
+          "max": 1614.0,
+          "min": 510.0
+        },
+        "power_w": {
+          "mean": 45.25710843373494,
+          "max": 48.74,
+          "min": 26.18
+        },
+        "sm_clock_mhz": {
+          "mean": 1960.879518072289,
+          "max": 2017.0,
+          "min": 562.0
+        }
+      },
+      "iteration": 3,
+      "time_window": null
+    },
+    {
+      "wall_time_s": 17.39363121599945,
+      "exit_code": 0,
+      "error": "",
+      "bpf_delta": {},
+      "gpu": {
+        "gpu_util": {
+          "mean": 82.8735632183908,
+          "max": 100.0,
+          "min": 1.0
+        },
+        "mem_util": {
+          "mean": 9.310344827586206,
+          "max": 12.0,
+          "min": 1.0
+        },
+        "mem_used_mb": {
+          "mean": 1297.287356321839,
+          "max": 1614.0,
+          "min": 510.0
+        },
+        "power_w": {
+          "mean": 45.96632183908046,
+          "max": 49.03,
+          "min": 28.49
+        },
+        "sm_clock_mhz": {
+          "mean": 2007.1149425287356,
+          "max": 2017.0,
+          "min": 1845.0
+        }
+      },
+      "iteration": 4,
+      "time_window": null
+    },
+    {
+      "wall_time_s": 17.127115056000548,
+      "exit_code": 0,
+      "error": "",
+      "bpf_delta": {},
+      "gpu": {
+        "gpu_util": {
+          "mean": 85.11627906976744,
+          "max": 100.0,
+          "min": 1.0
+        },
+        "mem_util": {
+          "mean": 9.86046511627907,
+          "max": 12.0,
+          "min": 1.0
+        },
+        "mem_used_mb": {
+          "mean": 1299.3255813953488,
+          "max": 1614.0,
+          "min": 510.0
+        },
+        "power_w": {
+          "mean": 46.181395348837206,
+          "max": 49.15,
+          "min": 27.86
+        },
+        "sm_clock_mhz": {
+          "mean": 1967.7558139534883,
+          "max": 2017.0,
+          "min": 720.0
+        }
+      },
+      "iteration": 5,
+      "time_window": null
+    },
+    {
+      "wall_time_s": 18.134351183000035,
+      "exit_code": 0,
+      "error": "",
+      "bpf_delta": {},
+      "gpu": {
+        "gpu_util": {
+          "mean": 88.62637362637362,
+          "max": 100.0,
+          "min": 1.0
+        },
+        "mem_util": {
+          "mean": 10.032967032967033,
+          "max": 14.0,
+          "min": 1.0
+        },
+        "mem_used_mb": {
+          "mean": 1306.7692307692307,
+          "max": 1614.0,
+          "min": 510.0
+        },
+        "power_w": {
+          "mean": 46.51703296703297,
+          "max": 49.51,
+          "min": 26.95
+        },
+        "sm_clock_mhz": {
+          "mean": 1978.3626373626373,
+          "max": 2017.0,
+          "min": 517.0
+        }
+      },
+      "iteration": 6,
+      "time_window": null
+    },
+    {
+      "wall_time_s": 18.77375285100061,
+      "exit_code": 0,
+      "error": "",
+      "bpf_delta": {},
+      "gpu": {
+        "gpu_util": {
+          "mean": 86.80851063829788,
+          "max": 100.0,
+          "min": 5.0
+        },
+        "mem_util": {
+          "mean": 12.425531914893616,
+          "max": 18.0,
+          "min": 3.0
+        },
+        "mem_used_mb": {
+          "mean": 1311.872340425532,
+          "max": 1614.0,
+          "min": 510.0
+        },
+        "power_w": {
+          "mean": 47.26255319148936,
+          "max": 49.95,
+          "min": 30.51
+        },
+        "sm_clock_mhz": {
+          "mean": 2009.6808510638298,
+          "max": 2017.0,
+          "min": 1845.0
+        }
+      },
+      "iteration": 7,
+      "time_window": null
+    },
+    {
+      "wall_time_s": 17.92869777800024,
+      "exit_code": 0,
+      "error": "",
+      "bpf_delta": {},
+      "gpu": {
+        "gpu_util": {
+          "mean": 88.11111111111111,
+          "max": 100.0,
+          "min": 5.0
+        },
+        "mem_util": {
+          "mean": 11.944444444444445,
+          "max": 14.0,
+          "min": 3.0
+        },
+        "mem_used_mb": {
+          "mean": 1299.5555555555557,
+          "max": 1432.0,
+          "min": 510.0
+        },
+        "power_w": {
+          "mean": 47.63766666666667,
+          "max": 50.3,
+          "min": 32.38
+        },
+        "sm_clock_mhz": {
+          "mean": 1996.9444444444443,
+          "max": 2017.0,
+          "min": 1845.0
+        }
+      },
+      "iteration": 8,
+      "time_window": null
+    }
+  ],
+  "aggregate": {
+    "wall_mean_s": 17.610502322000116,
+    "wall_stdev_s": 1.3610812753684558,
+    "wall_min_s": 15.282181485000365,
+    "wall_max_s": 19.705439833999662,
+    "n_ok": 8,
+    "n_total": 8,
+    "bpf": {
+      "handle_cuMemcpy_htod_async": {
+        "calls_mean": 0,
+        "total_ns_mean": 0,
+        "avg_ns_mean": 0
+      },
+      "handle_cuMemAlloc": {
+        "calls_mean": 0,
+        "total_ns_mean": 0,
+        "avg_ns_mean": 0
+      },
+      "handle_cuMemcpy_htod": {
+        "calls_mean": 0,
+        "total_ns_mean": 0,
+        "avg_ns_mean": 0
+      },
+      "handle_cuMemcpy_dtoh": {
+        "calls_mean": 0,
+        "total_ns_mean": 0,
+        "avg_ns_mean": 0
+      },
+      "handle_cuStreamSync": {
+        "calls_mean": 0,
+        "total_ns_mean": 0,
+        "avg_ns_mean": 0
+      },
+      "handle_cuStreamSynchronize_ret": {
+        "calls_mean": 0,
+        "total_ns_mean": 0,
+        "avg_ns_mean": 0
+      },
+      "handle_cuLaunchkernel": {
+        "calls_mean": 0,
+        "total_ns_mean": 0,
+        "avg_ns_mean": 0
+      },
+      "handle_cuCtxSync_ret": {
+        "calls_mean": 0,
+        "total_ns_mean": 0,
+        "avg_ns_mean": 0
+      },
+      "handle_process_exit": {
+        "calls_mean": 0,
+        "total_ns_mean": 0,
+        "avg_ns_mean": 0
+      },
+      "watchdog_ioctl": {
+        "calls_mean": 0,
+        "total_ns_mean": 0,
+        "avg_ns_mean": 0
+      },
+      "handle_cuMemcpy_dtohAsync": {
+        "calls_mean": 0,
+        "total_ns_mean": 0,
+        "avg_ns_mean": 0
+      },
+      "handle_cuCtxSync": {
+        "calls_mean": 0,
+        "total_ns_mean": 0,
+        "avg_ns_mean": 0
+      }
+    }
+  }
+}

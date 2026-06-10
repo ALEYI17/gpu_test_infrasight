@@ -1,0 +1,176 @@
+{
+  "name": "miner_nbminer",
+  "kind": "other",
+  "path": "miners/nbminer",
+  "mode": "instrumented",
+  "time_window": 2,
+  "timestamp": "2026-05-30T22:59:03.392645+00:00",
+  "iterations": [
+    {
+      "wall_time_s": 960.0753295430004,
+      "exit_code": 0,
+      "error": "",
+      "bpf_delta": {
+        "watchdog_ioctl": {
+          "calls": 19042,
+          "total_ns": 41482781,
+          "avg_ns": 2178.488656653713
+        },
+        "handle_cuMemcpy_htod": {
+          "calls": 2,
+          "total_ns": 4858,
+          "avg_ns": 2429.0
+        },
+        "handle_cuMemcpy_htod_async": {
+          "calls": 42,
+          "total_ns": 592392,
+          "avg_ns": 14104.57142857143
+        },
+        "handle_cuMemAlloc": {
+          "calls": 5,
+          "total_ns": 34385,
+          "avg_ns": 6877.0
+        },
+        "handle_cuLaunchkernel": {
+          "calls": 9401,
+          "total_ns": 55050931,
+          "avg_ns": 5855.85905754707
+        },
+        "handle_cuCtxSync": {
+          "calls": 98,
+          "total_ns": 368383,
+          "avg_ns": 3759.0102040816328
+        },
+        "handle_process_exit": {
+          "calls": 1285,
+          "total_ns": 1647477,
+          "avg_ns": 1282.0832684824902
+        },
+        "handle_cuStreamSynchronize_ret": {
+          "calls": 8130,
+          "total_ns": 110056194,
+          "avg_ns": 13537.047232472325
+        },
+        "handle_cuStreamSync": {
+          "calls": 8131,
+          "total_ns": 18129935,
+          "avg_ns": 2229.730045504858
+        },
+        "handle_cuMemcpy_dtoh": {
+          "calls": 3,
+          "total_ns": 15365,
+          "avg_ns": 5121.666666666667
+        },
+        "handle_cuCtxSync_ret": {
+          "calls": 98,
+          "total_ns": 1923607,
+          "avg_ns": 19628.64285714286
+        },
+        "handle_cuMemcpy_dtohAsync": {
+          "calls": 1,
+          "total_ns": 6179,
+          "avg_ns": 6179.0
+        }
+      },
+      "gpu": {
+        "gpu_util": {
+          "mean": 74.40884438881936,
+          "max": 100.0,
+          "min": 0.0
+        },
+        "mem_util": {
+          "mean": 74.60575719649562,
+          "max": 100.0,
+          "min": 0.0
+        },
+        "mem_used_mb": {
+          "mean": 4011.395077179808,
+          "max": 6088.0,
+          "min": 282.0
+        },
+        "power_w": {
+          "mean": 86.6708656654151,
+          "max": 130.21,
+          "min": 10.64
+        },
+        "sm_clock_mhz": {
+          "mean": 1528.6839799749687,
+          "max": 2017.0,
+          "min": 210.0
+        }
+      },
+      "iteration": 1,
+      "time_window": 2
+    }
+  ],
+  "aggregate": {
+    "wall_mean_s": 960.0753295430004,
+    "wall_stdev_s": 0.0,
+    "wall_min_s": 960.0753295430004,
+    "wall_max_s": 960.0753295430004,
+    "n_ok": 1,
+    "n_total": 1,
+    "bpf": {
+      "watchdog_ioctl": {
+        "calls_mean": 19042,
+        "total_ns_mean": 41482781,
+        "avg_ns_mean": 2178.488656653713
+      },
+      "handle_cuMemcpy_htod": {
+        "calls_mean": 2,
+        "total_ns_mean": 4858,
+        "avg_ns_mean": 2429.0
+      },
+      "handle_cuMemcpy_htod_async": {
+        "calls_mean": 42,
+        "total_ns_mean": 592392,
+        "avg_ns_mean": 14104.57142857143
+      },
+      "handle_cuMemAlloc": {
+        "calls_mean": 5,
+        "total_ns_mean": 34385,
+        "avg_ns_mean": 6877.0
+      },
+      "handle_cuLaunchkernel": {
+        "calls_mean": 9401,
+        "total_ns_mean": 55050931,
+        "avg_ns_mean": 5855.85905754707
+      },
+      "handle_cuCtxSync": {
+        "calls_mean": 98,
+        "total_ns_mean": 368383,
+        "avg_ns_mean": 3759.0102040816328
+      },
+      "handle_process_exit": {
+        "calls_mean": 1285,
+        "total_ns_mean": 1647477,
+        "avg_ns_mean": 1282.0832684824902
+      },
+      "handle_cuStreamSynchronize_ret": {
+        "calls_mean": 8130,
+        "total_ns_mean": 110056194,
+        "avg_ns_mean": 13537.047232472325
+      },
+      "handle_cuStreamSync": {
+        "calls_mean": 8131,
+        "total_ns_mean": 18129935,
+        "avg_ns_mean": 2229.730045504858
+      },
+      "handle_cuMemcpy_dtoh": {
+        "calls_mean": 3,
+        "total_ns_mean": 15365,
+        "avg_ns_mean": 5121.666666666667
+      },
+      "handle_cuCtxSync_ret": {
+        "calls_mean": 98,
+        "total_ns_mean": 1923607,
+        "avg_ns_mean": 19628.64285714286
+      },
+      "handle_cuMemcpy_dtohAsync": {
+        "calls_mean": 1,
+        "total_ns_mean": 6179,
+        "avg_ns_mean": 6179.0
+      }
+    }
+  }
+}
