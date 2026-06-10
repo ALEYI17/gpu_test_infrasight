@@ -1,0 +1,12 @@
+{
+  "experiment": "ml_forest",
+  "script_or_path": "ml/random_forest/train.py",
+  "iteration": 5,
+  "time_window_s": 2,
+  "timestamp_utc": "2026-05-28T02:07:00.962203+00:00",
+  "overhead": {
+    "wall_time_s": 7.725891316999878,
+    "exit_code": 0,
+    "bpf_total_ns": 12284468
+  }
+}

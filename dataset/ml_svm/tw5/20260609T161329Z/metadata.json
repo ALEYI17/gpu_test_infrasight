@@ -1,0 +1,12 @@
+{
+  "experiment": "ml_svm",
+  "script_or_path": "ml/svm/train.py",
+  "iteration": 3,
+  "time_window_s": 5,
+  "timestamp_utc": "2026-06-09T16:13:29.757356+00:00",
+  "overhead": {
+    "wall_time_s": 19.200288866999927,
+    "exit_code": 0,
+    "bpf_total_ns": 17101024
+  }
+}

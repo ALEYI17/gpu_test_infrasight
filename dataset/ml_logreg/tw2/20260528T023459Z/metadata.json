@@ -1,0 +1,12 @@
+{
+  "experiment": "ml_logreg",
+  "script_or_path": "ml/logistic_regression/train.py",
+  "iteration": 5,
+  "time_window_s": 2,
+  "timestamp_utc": "2026-05-28T02:34:59.289511+00:00",
+  "overhead": {
+    "wall_time_s": 18.51518580300035,
+    "exit_code": 0,
+    "bpf_total_ns": 15209832
+  }
+}

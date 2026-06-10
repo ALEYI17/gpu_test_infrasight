@@ -1,0 +1,12 @@
+{
+  "experiment": "llm_gpt",
+  "script_or_path": "llm/gpt",
+  "iteration": 2,
+  "time_window_s": 2,
+  "timestamp_utc": "2026-05-29T02:45:25.707081+00:00",
+  "overhead": {
+    "wall_time_s": 129.41426878699986,
+    "exit_code": 0,
+    "bpf_total_ns": 1261651229
+  }
+}

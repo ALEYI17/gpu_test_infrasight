@@ -1,0 +1,12 @@
+{
+  "experiment": "dl_lstm_train",
+  "script_or_path": "dl/lstm/train.py",
+  "iteration": 3,
+  "time_window_s": 2,
+  "timestamp_utc": "2026-05-28T02:51:31.182007+00:00",
+  "overhead": {
+    "wall_time_s": 26.638190995000514,
+    "exit_code": 0,
+    "bpf_total_ns": 659231379
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "experiment": "passwd_hashcat",
+  "script_or_path": "passwd_cracker/hashcat",
+  "iteration": 1,
+  "time_window_s": 1,
+  "timestamp_utc": "2026-06-06T15:59:36.130283+00:00",
+  "overhead": {
+    "wall_time_s": 371.060974229,
+    "exit_code": 0,
+    "bpf_total_ns": 152855786
+  }
+}

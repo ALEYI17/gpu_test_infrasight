@@ -1,0 +1,12 @@
+{
+  "experiment": "dl_cnn_train",
+  "script_or_path": "dl/cnn/train.py",
+  "iteration": 5,
+  "time_window_s": 5,
+  "timestamp_utc": "2026-06-09T15:24:40.164189+00:00",
+  "overhead": {
+    "wall_time_s": 30.15668534700012,
+    "exit_code": 0,
+    "bpf_total_ns": 133809613
+  }
+}

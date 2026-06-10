@@ -1,0 +1,12 @@
+{
+  "experiment": "llm_roberta",
+  "script_or_path": "llm/roberta",
+  "iteration": 7,
+  "time_window_s": 1,
+  "timestamp_utc": "2026-06-06T20:35:42.591104+00:00",
+  "overhead": {
+    "wall_time_s": 29.629770855999595,
+    "exit_code": 0,
+    "bpf_total_ns": 235496715
+  }
+}

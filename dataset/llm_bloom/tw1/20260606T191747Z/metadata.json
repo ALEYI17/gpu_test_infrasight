@@ -1,0 +1,12 @@
+{
+  "experiment": "llm_bloom",
+  "script_or_path": "llm/bloom",
+  "iteration": 1,
+  "time_window_s": 1,
+  "timestamp_utc": "2026-06-06T19:17:47.752394+00:00",
+  "overhead": {
+    "wall_time_s": 185.12295868899946,
+    "exit_code": 0,
+    "bpf_total_ns": 4650906668
+  }
+}

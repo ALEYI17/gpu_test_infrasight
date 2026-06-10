@@ -1,0 +1,12 @@
+{
+  "experiment": "blender",
+  "script_or_path": "blender/",
+  "iteration": 4,
+  "time_window_s": 2,
+  "timestamp_utc": "2026-06-09T17:37:17.587532+00:00",
+  "overhead": {
+    "wall_time_s": 72.27909692100002,
+    "exit_code": 0,
+    "bpf_total_ns": 29447782
+  }
+}

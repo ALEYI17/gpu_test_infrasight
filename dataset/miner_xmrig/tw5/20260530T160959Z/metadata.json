@@ -1,0 +1,12 @@
+{
+  "experiment": "miner_xmrig",
+  "script_or_path": "miners/xmrig",
+  "iteration": 3,
+  "time_window_s": 5,
+  "timestamp_utc": "2026-05-30T16:09:59.268487+00:00",
+  "overhead": {
+    "wall_time_s": 435.7417402650008,
+    "exit_code": 0,
+    "bpf_total_ns": 68374236
+  }
+}

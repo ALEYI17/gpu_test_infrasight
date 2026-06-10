@@ -1,0 +1,12 @@
+{
+  "experiment": "llm_bert",
+  "script_or_path": "llm/bert",
+  "iteration": 2,
+  "time_window_s": 1,
+  "timestamp_utc": "2026-05-28T23:09:46.399646+00:00",
+  "overhead": {
+    "wall_time_s": 105.95596822000005,
+    "exit_code": 0,
+    "bpf_total_ns": 334986899
+  }
+}
