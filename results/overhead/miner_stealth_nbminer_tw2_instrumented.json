@@ -1,0 +1,368 @@
+{
+  "name": "miner_stealth_nbminer",
+  "kind": "other",
+  "path": "miners/stealth-nbminer",
+  "mode": "instrumented",
+  "time_window": 2,
+  "timestamp": "2026-06-17T22:46:51.170396+00:00",
+  "iterations": [
+    {
+      "wall_time_s": 960.0682894540005,
+      "exit_code": 0,
+      "error": "",
+      "bpf_delta": {
+        "handle_cuLaunchkernel": {
+          "calls": 6232,
+          "total_ns": 74412759,
+          "avg_ns": 11940.42987804878
+        },
+        "handle_cuMemcpy_htod_async": {
+          "calls": 38,
+          "total_ns": 405705,
+          "avg_ns": 10676.447368421053
+        },
+        "watchdog_ioctl": {
+          "calls": 215415,
+          "total_ns": 252425011,
+          "avg_ns": 1171.807956734675
+        },
+        "handle_process_exit": {
+          "calls": 5114,
+          "total_ns": 5376137,
+          "avg_ns": 1051.2587016034415
+        },
+        "handle_cuMemAlloc": {
+          "calls": 5,
+          "total_ns": 24268,
+          "avg_ns": 4853.6
+        },
+        "handle_cuCtxSync_ret": {
+          "calls": 98,
+          "total_ns": 1262172,
+          "avg_ns": 12879.30612244898
+        },
+        "handle_cuStreamSync": {
+          "calls": 5393,
+          "total_ns": 17665055,
+          "avg_ns": 3275.5525681438903
+        },
+        "handle_cuMemcpy_htod": {
+          "calls": 2,
+          "total_ns": 4393,
+          "avg_ns": 2196.5
+        },
+        "handle_cuStreamSynchronize_ret": {
+          "calls": 5393,
+          "total_ns": 33055697,
+          "avg_ns": 6129.370851103282
+        },
+        "handle_cuMemcpy_dtohAsync": {
+          "calls": 1,
+          "total_ns": 5182,
+          "avg_ns": 5182.0
+        },
+        "handle_cuMemcpy_dtoh": {
+          "calls": 4,
+          "total_ns": 16574,
+          "avg_ns": 4143.5
+        },
+        "handle_cuCtxSync": {
+          "calls": 98,
+          "total_ns": 238175,
+          "avg_ns": 2430.3571428571427
+        }
+      },
+      "gpu": {
+        "gpu_util": {
+          "mean": 62.2266944734098,
+          "max": 100.0,
+          "min": 1.0
+        },
+        "mem_util": {
+          "mean": 63.0310740354536,
+          "max": 100.0,
+          "min": 1.0
+        },
+        "mem_used_mb": {
+          "mean": 4167.430239833159,
+          "max": 6231.0,
+          "min": 375.0
+        },
+        "power_w": {
+          "mean": 70.79755370177269,
+          "max": 129.46,
+          "min": 12.23
+        },
+        "sm_clock_mhz": {
+          "mean": 1619.3209593326383,
+          "max": 2017.0,
+          "min": 225.0
+        }
+      },
+      "iteration": 1,
+      "time_window": 2
+    },
+    {
+      "wall_time_s": 960.0786592240001,
+      "exit_code": 0,
+      "error": "",
+      "bpf_delta": {
+        "handle_cuLaunchkernel": {
+          "calls": 6059,
+          "total_ns": 72953590,
+          "avg_ns": 12040.533091269186
+        },
+        "handle_cuMemcpy_htod_async": {
+          "calls": 45,
+          "total_ns": 514096,
+          "avg_ns": 11424.355555555556
+        },
+        "watchdog_ioctl": {
+          "calls": 209676,
+          "total_ns": 260217318,
+          "avg_ns": 1241.0448406112287
+        },
+        "handle_process_exit": {
+          "calls": 3976,
+          "total_ns": 4470804,
+          "avg_ns": 1124.4476861167002
+        },
+        "handle_cuMemAlloc": {
+          "calls": 5,
+          "total_ns": 29498,
+          "avg_ns": 5899.6
+        },
+        "handle_cuCtxSync_ret": {
+          "calls": 98,
+          "total_ns": 1467068,
+          "avg_ns": 14970.081632653062
+        },
+        "handle_cuStreamSync": {
+          "calls": 5237,
+          "total_ns": 17323613,
+          "avg_ns": 3307.9268665266372
+        },
+        "handle_cuMemcpy_htod": {
+          "calls": 2,
+          "total_ns": 5582,
+          "avg_ns": 2791.0
+        },
+        "handle_cuStreamSynchronize_ret": {
+          "calls": 5237,
+          "total_ns": 32598641,
+          "avg_ns": 6224.678441856025
+        },
+        "handle_cuMemcpy_dtohAsync": {
+          "calls": 1,
+          "total_ns": 7354,
+          "avg_ns": 7354.0
+        },
+        "handle_cuMemcpy_dtoh": {
+          "calls": 3,
+          "total_ns": 9182,
+          "avg_ns": 3060.6666666666665
+        },
+        "handle_cuCtxSync": {
+          "calls": 98,
+          "total_ns": 275619,
+          "avg_ns": 2812.438775510204
+        }
+      },
+      "gpu": {
+        "gpu_util": {
+          "mean": 61.489259645464024,
+          "max": 100.0,
+          "min": 4.0
+        },
+        "mem_util": {
+          "mean": 62.15599582898853,
+          "max": 100.0,
+          "min": 2.0
+        },
+        "mem_used_mb": {
+          "mean": 4151.872158498436,
+          "max": 6241.0,
+          "min": 375.0
+        },
+        "power_w": {
+          "mean": 70.10755995828988,
+          "max": 129.54,
+          "min": 11.51
+        },
+        "sm_clock_mhz": {
+          "mean": 1622.466527632951,
+          "max": 2017.0,
+          "min": 247.0
+        }
+      },
+      "iteration": 2,
+      "time_window": 2
+    },
+    {
+      "wall_time_s": 960.0886351230001,
+      "exit_code": 0,
+      "error": "",
+      "bpf_delta": {
+        "handle_cuLaunchkernel": {
+          "calls": 5710,
+          "total_ns": 69893040,
+          "avg_ns": 12240.46234676007
+        },
+        "handle_cuMemcpy_htod_async": {
+          "calls": 53,
+          "total_ns": 652796,
+          "avg_ns": 12316.905660377359
+        },
+        "watchdog_ioctl": {
+          "calls": 199612,
+          "total_ns": 256765874,
+          "avg_ns": 1286.3248401899684
+        },
+        "handle_process_exit": {
+          "calls": 3926,
+          "total_ns": 4384713,
+          "avg_ns": 1116.8397860417729
+        },
+        "handle_cuMemAlloc": {
+          "calls": 5,
+          "total_ns": 27244,
+          "avg_ns": 5448.8
+        },
+        "handle_cuCtxSync_ret": {
+          "calls": 101,
+          "total_ns": 1451040,
+          "avg_ns": 14366.732673267326
+        },
+        "handle_cuStreamSync": {
+          "calls": 4874,
+          "total_ns": 16564349,
+          "avg_ns": 3398.5123102174807
+        },
+        "handle_cuMemcpy_htod": {
+          "calls": 2,
+          "total_ns": 4963,
+          "avg_ns": 2481.5
+        },
+        "handle_cuStreamSynchronize_ret": {
+          "calls": 4874,
+          "total_ns": 30716956,
+          "avg_ns": 6302.206811653673
+        },
+        "handle_cuMemcpy_dtohAsync": {
+          "calls": 1,
+          "total_ns": 6956,
+          "avg_ns": 6956.0
+        },
+        "handle_cuMemcpy_dtoh": {
+          "calls": 3,
+          "total_ns": 11715,
+          "avg_ns": 3905.0
+        },
+        "handle_cuCtxSync": {
+          "calls": 101,
+          "total_ns": 281975,
+          "avg_ns": 2791.831683168317
+        }
+      },
+      "gpu": {
+        "gpu_util": {
+          "mean": 59.465276329509905,
+          "max": 100.0,
+          "min": 4.0
+        },
+        "mem_util": {
+          "mean": 60.02857142857143,
+          "max": 100.0,
+          "min": 2.0
+        },
+        "mem_used_mb": {
+          "mean": 4161.927424400417,
+          "max": 6225.0,
+          "min": 371.0
+        },
+        "power_w": {
+          "mean": 68.01008967674662,
+          "max": 129.53,
+          "min": 12.73
+        },
+        "sm_clock_mhz": {
+          "mean": 1617.273409801877,
+          "max": 2025.0,
+          "min": 240.0
+        }
+      },
+      "iteration": 3,
+      "time_window": 2
+    }
+  ],
+  "aggregate": {
+    "wall_mean_s": 960.0785279336669,
+    "wall_stdev_s": 0.010173469891072477,
+    "wall_min_s": 960.0682894540005,
+    "wall_max_s": 960.0886351230001,
+    "n_ok": 3,
+    "n_total": 3,
+    "bpf": {
+      "handle_cuLaunchkernel": {
+        "calls_mean": 6000.333333333333,
+        "total_ns_mean": 72419796.33333333,
+        "avg_ns_mean": 12073.808438692678
+      },
+      "handle_cuMemcpy_htod_async": {
+        "calls_mean": 45.333333333333336,
+        "total_ns_mean": 524199,
+        "avg_ns_mean": 11472.569528117989
+      },
+      "watchdog_ioctl": {
+        "calls_mean": 208234.33333333334,
+        "total_ns_mean": 256469401,
+        "avg_ns_mean": 1233.0592125119574
+      },
+      "handle_process_exit": {
+        "calls_mean": 4338.666666666667,
+        "total_ns_mean": 4743884.666666667,
+        "avg_ns_mean": 1097.5153912539715
+      },
+      "handle_cuMemAlloc": {
+        "calls_mean": 5,
+        "total_ns_mean": 27003.333333333332,
+        "avg_ns_mean": 5400.666666666667
+      },
+      "handle_cuCtxSync_ret": {
+        "calls_mean": 99,
+        "total_ns_mean": 1393426.6666666667,
+        "avg_ns_mean": 14072.040142789789
+      },
+      "handle_cuStreamSync": {
+        "calls_mean": 5168,
+        "total_ns_mean": 17184339,
+        "avg_ns_mean": 3327.330581629336
+      },
+      "handle_cuMemcpy_htod": {
+        "calls_mean": 2,
+        "total_ns_mean": 4979.333333333333,
+        "avg_ns_mean": 2489.6666666666665
+      },
+      "handle_cuStreamSynchronize_ret": {
+        "calls_mean": 5168,
+        "total_ns_mean": 32123764.666666668,
+        "avg_ns_mean": 6218.752034870993
+      },
+      "handle_cuMemcpy_dtohAsync": {
+        "calls_mean": 1,
+        "total_ns_mean": 6497.333333333333,
+        "avg_ns_mean": 6497.333333333333
+      },
+      "handle_cuMemcpy_dtoh": {
+        "calls_mean": 3.3333333333333335,
+        "total_ns_mean": 12490.333333333334,
+        "avg_ns_mean": 3703.0555555555557
+      },
+      "handle_cuCtxSync": {
+        "calls_mean": 99,
+        "total_ns_mean": 265256.3333333333,
+        "avg_ns_mean": 2678.209200511888
+      }
+    }
+  }
+}
