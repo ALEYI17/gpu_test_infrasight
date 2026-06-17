@@ -1,0 +1,12 @@
+{
+  "experiment": "miner_stealth_trex",
+  "script_or_path": "miners/stealth-trex",
+  "iteration": 2,
+  "time_window_s": 5,
+  "timestamp_utc": "2026-06-17T16:37:03.511574+00:00",
+  "overhead": {
+    "wall_time_s": 962.2073064029998,
+    "exit_code": 0,
+    "bpf_total_ns": 29146494652
+  }
+}
