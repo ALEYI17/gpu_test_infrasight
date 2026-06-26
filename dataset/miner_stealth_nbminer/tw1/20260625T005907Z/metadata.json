@@ -1,0 +1,12 @@
+{
+  "experiment": "miner_stealth_nbminer",
+  "script_or_path": "miners/stealth-nbminer",
+  "iteration": 2,
+  "time_window_s": 1,
+  "timestamp_utc": "2026-06-25T00:59:07.900394+00:00",
+  "overhead": {
+    "wall_time_s": 960.095779756,
+    "exit_code": 0,
+    "bpf_total_ns": 451431831
+  }
+}
