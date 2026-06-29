@@ -1,0 +1,12 @@
+{
+  "experiment": "difusser_stable_diffusion",
+  "script_or_path": "diffuser",
+  "iteration": 2,
+  "time_window_s": 2,
+  "timestamp_utc": "2026-06-29T23:13:58.777635+00:00",
+  "overhead": {
+    "wall_time_s": 380.352835485,
+    "exit_code": 0,
+    "bpf_total_ns": 651470081
+  }
+}
