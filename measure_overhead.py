@@ -115,7 +115,9 @@ CONFIG = {
         #("other", "miners/t-rex",            "miner_trex"),
         #("other", "miners/stealth-trex",            "miner_stealth_trex"),
         #("other", "miners/stealth-gminer",            "miner_stealth_gminer"),        
-        ("other", "miners/stealth-nbminer",            "miner_stealth_nbminer"),        
+        #("other", "miners/stealth-nbminer",            "miner_stealth_nbminer"),        
+        #("other", "diffuser",            "difusser_stable_diffusion"),
+        ("other", "video_encoder",            "ffmpeg"),
         #("dl_ml", "dl/cnn/train.py",         "dl_cnn_train"),
         #("dl_ml", "dl/lstm/train.py",        "dl_lstm_train"),
         #("llm",   "llm/bert",                "llm_bert"),
@@ -139,7 +141,7 @@ CONFIG = {
         " --server-port=8080"
         " --cuda-lib=/usr/lib/x86_64-linux-gnu/libcuda.so"
     ),
-    "loader_wait":   60,        # seconds to wait after loader starts before running workload
+    "loader_wait":   30,        # seconds to wait after loader starts before running workload
     # Path to bpftool binary. On Nix, sudo strips PATH so auto-detection fails.
     # Set this to the output of: which bpftool
     # Leave empty string "" to let the script auto-detect.

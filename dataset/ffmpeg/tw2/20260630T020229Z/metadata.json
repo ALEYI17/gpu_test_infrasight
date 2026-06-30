@@ -1,0 +1,12 @@
+{
+  "experiment": "ffmpeg",
+  "script_or_path": "video_encoder",
+  "iteration": 3,
+  "time_window_s": 2,
+  "timestamp_utc": "2026-06-30T02:02:29.662988+00:00",
+  "overhead": {
+    "wall_time_s": 782.369323243,
+    "exit_code": 0,
+    "bpf_total_ns": 2224371381
+  }
+}

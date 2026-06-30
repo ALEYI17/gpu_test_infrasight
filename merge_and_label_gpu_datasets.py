@@ -28,6 +28,8 @@ LABEL_MAP = {
     "ml_logreg":      0,
     "ml_svm":         0,
     "blender":        0,
+    "difusser_stable_diffusion": 0,
+    "ffmpeg": 0,
 }
 
 # Time windows that were used during collection (must match CONFIG["time_windows"])
