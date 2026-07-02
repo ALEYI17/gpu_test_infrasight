@@ -1,0 +1,12 @@
+{
+  "experiment": "whisper",
+  "script_or_path": "whisper",
+  "iteration": 3,
+  "time_window_s": 2,
+  "timestamp_utc": "2026-07-02T17:55:00.578808+00:00",
+  "overhead": {
+    "wall_time_s": 307.5162836740001,
+    "exit_code": 0,
+    "bpf_total_ns": 5250621666
+  }
+}

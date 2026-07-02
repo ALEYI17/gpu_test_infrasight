@@ -1,0 +1,12 @@
+{
+  "experiment": "cublas",
+  "script_or_path": "cublas",
+  "iteration": 2,
+  "time_window_s": 2,
+  "timestamp_utc": "2026-07-02T17:14:22.140721+00:00",
+  "overhead": {
+    "wall_time_s": 673.035802118,
+    "exit_code": 0,
+    "bpf_total_ns": 477978280
+  }
+}
